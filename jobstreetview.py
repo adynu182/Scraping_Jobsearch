@@ -157,7 +157,8 @@ def job_detail(id):
         row = resp['data']['jobDetail']
     else:
         print('none')
-
+        print('----------------------------------------')
+        return
     
     nm = row['header']['company']
     if 'name' not in nm or nm['name'] == None or nm['name'] == "":
