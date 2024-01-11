@@ -1,22 +1,71 @@
 import requests
 from bs4 import BeautifulSoup
+from datetime import datetime
 
+cari = input('Masukan Key : ',)
 
-response = requests.get('https://www.linkedin.com/jobs/search/?currentJobId=3735895362&geoId=104370960&keywords=Administration&location=Jakarta%20Raya%2C%20Indonesia')
-print(response)
+response = requests.get(
+f'https://www.linkedin.com/jobs/search?keywords={cari}&location=Indonesia&locationId=&geoId=102478259&f_TPR=&f_PP=102157348%2C102471123%2C105898461&f_WT=1&f_JT=F%2CC&position=1&pageNum=0')
 
+#print(response)
 soup = BeautifulSoup(response.text, "lxml")
-print(soup.title)
+#print(soup.title)
 
-a_href=soup.findAll("a",{"class":"disabled ember-view job-card-container__link job-card-list__title"})
-lis = []
-for lk in a_href:
-    # link = burl+a_href['href'].text
-   print(lk)
+print('-----------------------------------------')  
+ddd = soup.find('div', class_='base-serp-page__content')
+#print(ddd)
+ulul = ddd.find('ul')
+#print(ulul)
 
-# class="flex-grow-1 artdeco-entity-lockup__content ember-view">
-# <a data-control-id="5S7XZVAawSVXD9HYIKaDcA==" tabindex="0" href="/jobs/view/3735895362/?eBP=CwEAAAGLEy8U8F5GVhI-Jp59xvFixIG3lwG6CiHFg8MKkwUBnyONMKDikxuPKNysHTcOAYNHe3rUlPAAtvbO5P0PnlZ1vZMZwCpC3p67pCzYrfvWqR8WtU-z8XCxIuHM7fhEbWLFTgB8W2pfXIf_diLpKnP0Qqya7GZuD_63v-UEWcRVOeHLCd7f9Ac9lpZ5LX94_T5KitjQ-3usdEEG2SOCQaAsMQ_XIuAYYkdYkEyKHf2Hf9hfFFjtjJh-9CnLofuJpG_UmYoRisqcoyMJ9_68JeOg2FfS7JVePxNf-z3ay6yozeVyZodPpIjOj2d5f4njkXmx2YwwSkRA3ZdF-dSsUFY6lGRyO6NB9kHZalqgNlL4hzvBYIsyT9kxczRcctI8JUg9LO2LHSjNNk9liMDKsdfd1ZnFoKwz&amp;refId=bivVqrzhERYL0bT8URkYjg%3D%3D&amp;trackingId=5S7XZVAawSVXD9HYIKaDcA%3D%3D&amp;trk=flagship3_search_srp_jobs" id="ember668" class="<a data-control-id="5S7XZVAawSVXD9HYIKaDcA==" tabindex="0" href="/jobs/view/3735895362/?eBP=CwEAAAGLEy8U8F5GVhI-Jp59xvFixIG3lwG6CiHFg8MKkwUBnyONMKDikxuPKNysHTcOAYNHe3rUlPAAtvbO5P0PnlZ1vZMZwCpC3p67pCzYrfvWqR8WtU-z8XCxIuHM7fhEbWLFTgB8W2pfXIf_diLpKnP0Qqya7GZuD_63v-UEWcRVOeHLCd7f9Ac9lpZ5LX94_T5KitjQ-3usdEEG2SOCQaAsMQ_XIuAYYkdYkEyKHf2Hf9hfFFjtjJh-9CnLofuJpG_UmYoRisqcoyMJ9_68JeOg2FfS7JVePxNf-z3ay6yozeVyZodPpIjOj2d5f4njkXmx2YwwSkRA3ZdF-dSsUFY6lGRyO6NB9kHZalqgNlL4hzvBYIsyT9kxczRcctI8JUg9LO2LHSjNNk9liMDKsdfd1ZnFoKwz&amp;refId=bivVqrzhERYL0bT8URkYjg%3D%3D&amp;trackingId=5S7XZVAawSVXD9HYIKaDcA%3D%3D&amp;trk=flagship3_search_srp_jobs" id="ember668" class="disabled ember-view job-card-container__link job-card-list__title" aria-label="Product Sales Specialist (Hotel PMS software)">
-                  # Product Sales Specialist (Hotel PMS software)
-                # </a>" aria-label="Product Sales Specialist (Hotel PMS software)">
-                  # Product Sales Specialist (Hotel PMS software)
-                # </a>
+url = ulul.findAll('a', class_='base-card__full-link absolute top-0 right-0 bottom-0 left-0 p-0 z-[2]')
+#print(len(url))
+
+posisi = ulul.findAll('span', class_='sr-only')
+#print(len(posisi))
+
+nama = ulul.findAll('a', class_='hidden-nested-link')
+#print(len(nama))
+
+lokasi = ulul.findAll('span', class_='job-search-card__location')
+#print(len(lokasi))
+
+pdate = ulul.findAll('time', class_='job-search-card__listdate')
+#print(len(pdate))
+
+jlm = len(posisi)
+i=0
+jobrow = 0
+for e in range(0, jlm):
+    pst = posisi[i].text
+    pst = pst.strip()
+    lk = url[i]
+    nm = nama[i].string
+    nm = nm.strip()
+    lok = lokasi[i].string
+    lok = lok.strip()
+    try:
+        dtt = pdate[i]
+        dtt = dtt['datetime']
+        dt = pdate[i].string
+        dt = dt.strip()
+    except:
+        dt = ''
+        dtt = ''
+    lkn = lk['href']
+    slk = lkn.split('?')
+    print(i+1)
+    print('Posisi   : ',pst)
+    print('Nama     : ',nm)
+    print('Alamat   : ',lok)
+    print('Link     : ',str(slk[0]))
+    print('Date     : ',dt, '(',dtt,')')
+    i += 1
+    print('-------------------------------------------------------------------')
+    jobrow += 1
+    if jobrow >= 5:
+        ln = input('Tampilkan 5 job lagi... (y/n)')
+        if ln == 'n':
+            break
+        else:
+            print('==================================')
+            jobrow = 0
